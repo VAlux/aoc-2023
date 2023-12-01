@@ -2,7 +2,7 @@
   // inputs:
   val p1TestInput = FileLoader.readFile("input-test-p1.txt")
   val p2TestInput = FileLoader.readFile("input-test-p2.txt")
-  val mainInput = FileLoader.readFile("input.txt")
+  val mainInput   = FileLoader.readFile("input.txt")
 
   // test results:
   val p1TestResult = d1p1.solve(p1TestInput)

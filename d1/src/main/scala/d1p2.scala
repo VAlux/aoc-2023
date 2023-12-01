@@ -4,15 +4,15 @@ import d1p1.*
 object d1p2 extends Solution:
   val numbersMapping: List[(String, String)] =
     List(
-      "one" -> "1",
-      "two" -> "2",
+      "one"   -> "1",
+      "two"   -> "2",
       "three" -> "3",
-      "four" -> "4",
-      "five" -> "5",
-      "six" -> "6",
+      "four"  -> "4",
+      "five"  -> "5",
+      "six"   -> "6",
       "seven" -> "7",
       "eight" -> "8",
-      "nine" -> "9"
+      "nine"  -> "9"
     ).sortBy((word, _) => -word.length())
 
   override def solve(input: List[String]): Int =
