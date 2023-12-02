@@ -19,5 +19,3 @@
   println(s"[TEST] P2: $p2TestResult")
   println(s"[ACTUAL] P2: $p2Result")
   println("-" * 20)
-
-  d2p1.test(p1TestInput)
