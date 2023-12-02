@@ -11,6 +11,12 @@ object d2p1 extends Solution:
   case class Round(entries: Set[RoundEntry])
   case class Game(id: Int, rounds: List[Round])
 
+  val bagContents = Map(
+    CubeType.RED   -> 12,
+    CubeType.GREEN -> 13,
+    CubeType.BLUE  -> 14
+  )
+
   def parseGame(input: String): Option[Game] =
     def parseRoundEntry(entry: String): Option[RoundEntry] =
       entry.split(" ") match
@@ -31,5 +37,13 @@ object d2p1 extends Solution:
     val parsed = input.map(parseGame)
     parsed.foreach(println)
 
+  def possibleRound(round: Round): Boolean =
+    def possibleRoundEntry(entry: RoundEntry): Boolean = bagContents(entry.cubeType) >= entry.amount
+    round.entries.forall(possibleRoundEntry)
+
   override def solve(input: List[String]): Int =
-    0
+    input
+      .flatMap(parseGame)
+      .filter(_.rounds.forall(possibleRound))
+      .map(_.id)
+      .sum
