@@ -2,8 +2,8 @@ val scala3Version = "3.3.0"
 
 inThisBuild(
   List(
-    version := "1.0.0",
-    scalaVersion := scala3Version,
+    version           := "1.0.0",
+    scalaVersion      := scala3Version,
     scalafmtOnCompile := true
   )
 )
@@ -26,6 +26,13 @@ lazy val d1 = project
   .dependsOn(shared)
   .settings(
     name := "Day 1"
+  )
+
+lazy val d2 = project
+  .in(file("d2"))
+  .dependsOn(shared)
+  .settings(
+    name := "Day 2"
   )
 
 addCommandAlias("cd", "project")
