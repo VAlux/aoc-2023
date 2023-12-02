@@ -15,6 +15,13 @@ lazy val root = project
     name := "Advent of Code 2023"
   )
 
+lazy val scaffolding = project
+  .in(file("scaffolding"))
+  .dependsOn(shared)
+  .settings(
+    name := "Scaffolding"
+  )
+
 lazy val shared = project
   .in(file("shared"))
   .settings(
@@ -33,6 +40,13 @@ lazy val d2 = project
   .dependsOn(shared)
   .settings(
     name := "Day 2"
+  )
+
+lazy val d3 = project
+  .in(file("d3"))
+  .dependsOn(shared)
+  .settings(
+    name := "Day 3"
   )
 
 addCommandAlias("cd", "project")
