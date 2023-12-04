@@ -33,10 +33,6 @@ object d2p1 extends Solution:
         Some(Game(id.toInt, rounds))
       case _                                         => None
 
-  def test(input: List[String]) =
-    val parsed = input.map(parseGame)
-    parsed.foreach(println)
-
   def possibleRound(round: Round): Boolean =
     def possibleRoundEntry(entry: RoundEntry): Boolean = bagContents(entry.cubeType) >= entry.amount
     round.entries.forall(possibleRoundEntry)
