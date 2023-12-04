@@ -1,6 +1,8 @@
 import d3p1.SchematicsEntry.*
 import scala.annotation.tailrec
 import scala.runtime.stdLibPatches.language.deprecated.symbolLiterals
+import Extensions.*
+
 object d3p1 extends Solution:
 
   enum SchematicsEntryType:
@@ -15,7 +17,8 @@ object d3p1 extends Solution:
         case ch if ch.isDigit => DIGIT
         case _                => SYMBOL
 
-  case class Location(val row: Int, val column: Int)
+  case class Location(val row: Int, val column: Int):
+    override def toString(): String = s"[$row, $column]"
 
   sealed trait SchematicsEntry[T]:
     val location: Location
@@ -25,16 +28,16 @@ object d3p1 extends Solution:
     def bodyLocation: Set[Location] =
       val row    = location.row
       val column = location.column
-      (0 to length).map(index => Location(row, column + index)).toSet
+      (0 until length).map(index => Location(row, column + index)).toSet
 
     def adjacentLocations: Set[Location] =
-      val row       = location.row
-      val column    = location.column
-      val topRow    = (0 to length + 1).map(index => Location(row - 1, column + index - 1)).toSet
-      val bottomRow = (0 to length + 1).map(index => Location(row + 1, column + index - 1)).toSet
-      val leftEdge  = Location(row, column - 1)
-      val rightEdge = Location(row, column + length)
-      topRow ++ bottomRow ++ List(leftEdge, rightEdge)
+      val row    = location.row
+      val column = location.column
+      val top    = (0 to length + 1).map(index => Location(row - 1, column + index - 1)).toSet
+      val bottom = (0 to length + 1).map(index => Location(row + 1, column + index - 1)).toSet
+      val left   = Location(row, column - 1)
+      val right  = Location(row, column + length)
+      top ++ bottom ++ List(left, right)
 
   object SchematicsEntry:
     case class PartNumber(val partNumber: Int, override val location: Location) extends SchematicsEntry[Int]:
@@ -65,28 +68,33 @@ object d3p1 extends Solution:
     def parse(
       current: (Char, Int),
       rem: List[(Char, Int)],
-      currentMode: SchematicsEntryType,
+      mode: SchematicsEntryType,
       rowIndex: Int,
       context: List[Char] = List.empty,
       acc: List[SchematicsEntry[_]] = List.empty
     ): List[SchematicsEntry[_]] =
-      if rem.isEmpty then appendContext(context, currentMode, acc, Location(rowIndex, current._2 - context.length))
+      if rem.isEmpty then
+        current match
+          case ('.', index) => appendContext(context, mode, acc, Location(rowIndex, index - context.length))
+          case (ch, index)  => appendContext(context :+ ch, mode, acc, Location(rowIndex, index - context.length))
       else
         current match
           case ('.', index) =>
-            if currentMode == DOT
+            if mode == DOT
             then parse(rem.head, rem.tail, DOT, rowIndex, context, acc)
             else
-              val newState = appendContext(context, currentMode, acc, Location(rowIndex, index - context.length))
+              val newState = appendContext(context, mode, acc, Location(rowIndex, index - context.length))
               parse(rem.head, rem.tail, DOT, rowIndex, List.empty, newState)
           case (ch, index)  =>
             val newMode = SchematicsEntryType.infer(ch)
-            if newMode == currentMode then parse(rem.head, rem.tail, currentMode, rowIndex, context :+ ch, acc)
+            if newMode == mode then parse(rem.head, rem.tail, mode, rowIndex, context :+ ch, acc)
             else
-              val newState = appendContext(context, currentMode, acc, Location(rowIndex, index - context.length))
+              val newState = appendContext(context, mode, acc, Location(rowIndex, index - context.length))
               parse(rem.head, rem.tail, newMode, rowIndex, List(ch), newState)
 
-    input.zipWithIndex
+    input
+      .map(_ + ".") // append dot to each line to simplify recursion exit case during parsing
+      .zipWithIndex
       .map((row, index) => (row.toCharArray().toList.zipWithIndex, index))
       .flatMap((row, index) => parse(row.head, row.tail, SchematicsEntryType.infer(row(0)._1), index))
 
@@ -94,12 +102,11 @@ object d3p1 extends Solution:
 
   def locateParts(schematics: List[SchematicsEntry[_]]): List[PartNumber] =
     val (symbols, parts) = schematics.partition(_.isInstanceOf[PartSymbol])
-    symbols
-      .map(_.adjacentLocations)
-      .flatMap(locations => parts.filter(part => locations.intersect(part.bodyLocation).nonEmpty))
+    val symbolLocations  = symbols.groupBy(_.location)
+    parts
+      .filter(part => part.adjacentLocations.exists(location => symbolLocations.contains(location)))
       .distinct
       .map(_.asInstanceOf[PartNumber])
 
   override def solve(input: List[String]): Int =
-    val parts = locateParts(parseEngineSchematics(input))
-    parts.map(_.value).sum
+    locateParts(parseEngineSchematics(input)).map(_.value).sum

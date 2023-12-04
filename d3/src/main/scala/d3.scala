@@ -7,10 +7,10 @@
   // test results:
   val p1TestResult = d3p1.solve(p1TestInput)
   val p2TestResult = d3p2.solve(p2TestInput)
-  //
-  // // main results:
-  val p1Result     = d3p1.solve(mainInput)
-  val p2Result     = d3p2.solve(mainInput)
+
+  // main results:
+  val p1Result = d3p1.solve(mainInput)
+  val p2Result = d3p2.solve(mainInput)
 
   println("Day 3:")
   println("-" * 20)
