@@ -21,6 +21,4 @@ object d3p2 extends Solution:
     }
 
   override def solve(input: List[String]): Int =
-    val schematics = parseEngineSchematics(input)
-    val gears      = locateGears(schematics)
-    gears.map(_.ratio).sum
+    locateGears(parseEngineSchematics(input)).map(_.ratio).sum
