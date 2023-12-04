@@ -1,5 +1,6 @@
 import d3p1.SchematicsEntry.*
 import scala.annotation.tailrec
+import scala.runtime.stdLibPatches.language.deprecated.symbolLiterals
 object d3p1 extends Solution:
 
   enum SchematicsEntryType:
@@ -16,25 +17,43 @@ object d3p1 extends Solution:
 
   case class Location(val row: Int, val column: Int)
 
-  sealed trait SchematicsEntry(val location: Location):
+  sealed trait SchematicsEntry[T]:
+    val location: Location
     val length: Int
+    val value: T
+
+    def bodyLocation: Set[Location] =
+      val row    = location.row
+      val column = location.column
+      (0 to length).map(index => Location(row, column + index)).toSet
+
+    def adjacentLocations: Set[Location] =
+      val row       = location.row
+      val column    = location.column
+      val topRow    = (0 to length + 1).map(index => Location(row - 1, column + index - 1)).toSet
+      val bottomRow = (0 to length + 1).map(index => Location(row + 1, column + index - 1)).toSet
+      val leftEdge  = Location(row, column - 1)
+      val rightEdge = Location(row, column + length)
+      topRow ++ bottomRow ++ List(leftEdge, rightEdge)
 
   object SchematicsEntry:
-    case class PartNumber(val value: Int, override val location: Location) extends SchematicsEntry(location):
-      override val length: Int = value.toString().length()
+    case class PartNumber(val partNumber: Int, override val location: Location) extends SchematicsEntry[Int]:
+      override val length: Int = partNumber.toString().length()
+      override val value: Int  = partNumber
 
-    case class PartSymbol(val symbol: Char, override val location: Location) extends SchematicsEntry(location):
+    case class PartSymbol(val symbol: Char, override val location: Location) extends SchematicsEntry[Char]:
       override val length: Int = 1
+      override val value: Char = symbol
 
-  def parseEngineSchematics(input: List[String]): List[SchematicsEntry] =
+  def parseEngineSchematics(input: List[String]): List[SchematicsEntry[_]] =
     import SchematicsEntryType.*
 
     def appendContext(
       context: List[Char],
       mode: SchematicsEntryType,
-      acc: List[SchematicsEntry],
+      acc: List[SchematicsEntry[_]],
       location: Location
-    ): List[SchematicsEntry] =
+    ): List[SchematicsEntry[_]] =
       if context.isEmpty then acc
       else
         mode match
@@ -49,9 +68,9 @@ object d3p1 extends Solution:
       currentMode: SchematicsEntryType,
       rowIndex: Int,
       context: List[Char] = List.empty,
-      acc: List[SchematicsEntry] = List.empty
-    ): List[SchematicsEntry] =
-      if rem.isEmpty then acc
+      acc: List[SchematicsEntry[_]] = List.empty
+    ): List[SchematicsEntry[_]] =
+      if rem.isEmpty then appendContext(context, currentMode, acc, Location(rowIndex, current._2 - context.length))
       else
         current match
           case ('.', index) =>
@@ -71,6 +90,16 @@ object d3p1 extends Solution:
       .map((row, index) => (row.toCharArray().toList.zipWithIndex, index))
       .flatMap((row, index) => parse(row.head, row.tail, SchematicsEntryType.infer(row(0)._1), index))
 
+  end parseEngineSchematics
+
+  def locateParts(schematics: List[SchematicsEntry[_]]): List[PartNumber] =
+    val (symbols, parts) = schematics.partition(_.isInstanceOf[PartSymbol])
+    symbols
+      .map(_.adjacentLocations)
+      .flatMap(locations => parts.filter(part => locations.intersect(part.bodyLocation).nonEmpty))
+      .distinct
+      .map(_.asInstanceOf[PartNumber])
+
   override def solve(input: List[String]): Int =
-    println(parseEngineSchematics(input).mkString("\n"))
-    0
+    val parts = locateParts(parseEngineSchematics(input))
+    parts.map(_.value).sum
