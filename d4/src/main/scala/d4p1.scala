@@ -1,2 +1,26 @@
 object d4p1 extends Solution:
-  override def solve(input: List[String]): Int = 0
+
+  case class Card(winning: Set[Int], actual: Set[Int]):
+    override def toString(): String =
+      s"winning: [${winning.mkString(",")}] actual: [${actual.mkString(",")}]"
+
+  def extractScoringNumbers(card: Card): Set[Int] =
+    card.winning.intersect(card.actual)
+
+  def calculateScore(card: Card): Int =
+    Math.pow(2, extractScoringNumbers(card).size - 1).toInt
+
+  def parseCard(input: String): Option[Card] =
+    def parseNumbers(numbers: String): Set[Int] =
+      numbers.split(" ").filter(!_.isBlank()).map(_.toInt).toSet
+
+    input.split(":") match
+      case Array(_, numbers) =>
+        numbers.trim.split("\\|") match
+          case Array(winning, actual) =>
+            Some(Card(parseNumbers(winning), parseNumbers(actual)))
+          case _                      => None
+      case _                 => None
+
+  override def solve(input: List[String]): Int =
+    input.flatMap(parseCard).map(calculateScore).sum
