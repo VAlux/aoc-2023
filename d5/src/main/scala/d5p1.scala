@@ -18,9 +18,10 @@ object d5p1 extends Solution:
       case _             => List.empty
 
   def parseAlmanach(input: List[String]): Almanach =
+    val segments = segmentInput(input)
+    segments.foreach(println)
     ???
 
   override def solve(input: List[String]): Int =
-    val segments = segmentInput(input)
-    segments.foreach(println)
+    val almanach = parseAlmanach(input)
     0
