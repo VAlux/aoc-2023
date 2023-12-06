@@ -7,6 +7,6 @@ object Extensions:
     def containsExactly(other: Set[A], amount: Int): Boolean =
       set.count(other.contains) == amount
 
-  extension (list: List[_])
-    def tailOrEmpty: List[_] =
+  extension [A](list: List[A])
+    def tailOrEmpty: List[A] =
       if list.isEmpty then List.empty else list.tail
