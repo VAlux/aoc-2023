@@ -11,10 +11,6 @@ import net.ruippeixotog.scalascraper.model.TextNode
 
 object Scaffolding:
   @main def entrypoint(day: Int) =
-    // val article   = getDayTask(2)
-    // val processed = article.map(processElement).mkString
-    // println(article.map(_.innerHtml).mkString)
-    // println(processed)
     generateScaffoldingForDay(day)
 
   def generateScaffoldingForDay(day: Int) =
@@ -50,36 +46,6 @@ object Scaffolding:
 
   def writeScaffoldingCode(content: String, file: Path) =
     Files.write(file, content.getBytes())
-
-  def getDayTask(day: Int): List[Element] =
-    import net.ruippeixotog.scalascraper.dsl.DSL._
-    import net.ruippeixotog.scalascraper.dsl.DSL.Extract._
-    import net.ruippeixotog.scalascraper.dsl.DSL.Parse._
-
-    val browser  = JsoupBrowser()
-    val document = browser.get(s"https://adventofcode.com/2023/day/$day")
-    document >> elementList("code")
-
-  def processElement(root: Element): String =
-    def processTag(tag: Node): String =
-      tag match
-        case ElementNode(element) =>
-          element.tagName match
-            case "h1"   => s"# ${process(element.childNodes.toList).mkString("\n\n")}"
-            case "h2"   => s"## ${process(element.childNodes.toList).mkString("\n\n")}"
-            case "h3"   => s"### ${process(element.childNodes.toList).mkString("\n\n")}"
-            case "code" => s"```\n${process(element.childNodes.toList).mkString("\n\n")}\n```"
-            case _      => process(element.childNodes.toList).mkString("\n\n")
-        case TextNode(content)    => content
-
-    def process(childNodes: List[Node], acc: List[String] = List.empty): List[String] =
-      if childNodes.isEmpty then acc
-      else
-        childNodes match
-          case tag :: rest => process(rest, acc :+ processTag(tag))
-          case _           => acc
-
-    processTag(ElementNode(root)).mkString
 
   def createDirectory(root: Path, path: String*): Path =
     println(s"$YELLOW directory at $root for path: ${path.mkString("/")}")
