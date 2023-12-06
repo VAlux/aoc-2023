@@ -1,6 +1,6 @@
 object d4p1 extends Solution:
 
-  case class Card(winning: Set[Int], actual: Set[Int]):
+  case class Card(id: Int, winning: Set[Int], actual: Set[Int]):
     override def toString(): String =
       s"winning: [${winning.mkString(",")}] actual: [${actual.mkString(",")}]"
 
@@ -15,12 +15,12 @@ object d4p1 extends Solution:
       numbers.split(" ").filter(!_.isBlank()).map(_.toInt).toSet
 
     input.split(":") match
-      case Array(_, numbers) =>
+      case Array(name, numbers) =>
+        val id = name.split(" ").last.toInt
         numbers.trim.split("\\|") match
-          case Array(winning, actual) =>
-            Some(Card(parseNumbers(winning), parseNumbers(actual)))
+          case Array(winning, actual) => Some(Card(id, parseNumbers(winning), parseNumbers(actual)))
           case _                      => None
-      case _                 => None
+      case _                    => None
 
   override def solve(input: List[String]): Int =
     input.flatMap(parseCard).map(calculateScore).sum
