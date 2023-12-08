@@ -10,3 +10,7 @@ object Extensions:
   extension [A](list: List[A])
     def tailOrEmpty: List[A] =
       if list.isEmpty then List.empty else list.tail
+
+  extension (str: String)
+    def isBlank: Boolean =
+      str.trim.isEmpty

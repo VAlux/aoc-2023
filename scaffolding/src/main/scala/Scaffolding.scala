@@ -3,11 +3,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import scala.Console.*
-import net.ruippeixotog.scalascraper.browser.JsoupBrowser
-import net.ruippeixotog.scalascraper.model.Element
-import net.ruippeixotog.scalascraper.model.Node
-import net.ruippeixotog.scalascraper.model.ElementNode
-import net.ruippeixotog.scalascraper.model.TextNode
 
 object Scaffolding:
   @main def entrypoint(day: Int) =

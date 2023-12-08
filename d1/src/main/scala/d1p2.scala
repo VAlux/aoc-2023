@@ -1,4 +1,5 @@
 import scala.annotation.tailrec
+import Extensions.*
 import d1p1.*
 
 object d1p2 extends Solution:
@@ -21,7 +22,7 @@ object d1p2 extends Solution:
   def replaceWordsWithNumbers(line: String): String =
     @tailrec
     def replace(current: String, acc: String = ""): String =
-      if current.isBlank() then acc
+      if current.isBlank then acc
       else
         numbersMapping.find((word, _) => current.startsWith(word)) match
           case None              => replace(current.tail, acc + current.head)

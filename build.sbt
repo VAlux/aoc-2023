@@ -18,10 +18,7 @@ lazy val root = project
 lazy val scaffolding = project
   .in(file("scaffolding"))
   .dependsOn(shared)
-  .settings(
-    name                                      := "Scaffolding",
-    libraryDependencies += "net.ruippeixotog" %% "scala-scraper" % "3.1.0"
-  )
+  .settings(name := "Scaffolding")
 
 lazy val shared = project
   .in(file("shared"))
