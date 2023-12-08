@@ -17,10 +17,26 @@ object d5p1 extends Solution:
       case first :: rest => go(rest.head, rest.tail, List(List(first)))
       case _             => List.empty
 
-  def parseAlmanach(input: List[String]): Almanach =
+  def parseSeeds(input: String): List[Long] =
+    ???
+
+  def parseMappings(input: List[List[String]]): List[Mapping] =
+    def parseMapping(mapping: List[String]): Option[Mapping] =
+      mapping match
+        case title :: numbers => ???
+        case _                => None
+
+    input.flatMap(parseMapping)
+
+  def parseAlmanach(input: List[String]): Option[Almanach] =
     val segments = segmentInput(input)
     segments.foreach(println)
-    ???
+    segments match
+      case List(seedsContent) :: mappingsContent =>
+        val seeds    = parseSeeds(seedsContent)
+        val mappings = parseMappings(mappingsContent)
+        Some(Almanach(seeds, mappings))
+      case _                                     => None
 
   override def solve(input: List[String]): Int =
     val almanach = parseAlmanach(input)
