@@ -43,17 +43,14 @@ object d5p1 extends Solution:
     val segments = segmentInput(input)
     Almanach(parseSeeds(segments.head.head), segments.tail.flatMap(parseMappings))
 
-  def lookup(source: Long, range: Range): Long =
-    val res =
-      if source >= range.source && source < (range.source + range.size)
-      then range.destination + (source - range.source)
-      else source
-    println(s"source: $source range: $range -> $res")
-    res
+  def isInRange(source: Long, range: Range): Boolean =
+    range.source <= source && source < (range.source + range.size)
 
   def lookup(source: Long, mapping: Mapping): Long =
-    println(mapping)
-    mapping.ranges.foldLeft(source)(lookup)
+    mapping.ranges
+      .find(range => isInRange(source, range))
+      .map(range => range.destination + (source - range.source))
+      .getOrElse(source)
 
   def lookup(source: Long, mappings: List[Mapping]): Long =
     mappings.foldLeft(source)(lookup)
@@ -61,5 +58,4 @@ object d5p1 extends Solution:
   override def solve(input: List[String]): Int =
     val almanach  = parseAlmanach(input)
     val locations = almanach.seeds.map(seed => lookup(seed, almanach.mappings))
-    println(locations)
     locations.min.intValue
