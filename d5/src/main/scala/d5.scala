@@ -9,8 +9,9 @@
   val p2TestResult = d5p2.solve(p2TestInput)
 
   // main results:
-  val p1Result = d5p1.solve(mainInput)
-  val p2Result = d5p2.solve(mainInput)
+  val runMain  = false
+  val p1Result = if runMain then d5p1.solve(mainInput) else 0
+  val p2Result = if runMain then d5p2.solve(mainInput) else 0
 
   println("Day 5:")
   println("-" * 20)
