@@ -9,7 +9,7 @@
   val p2TestResult = d5p2.solve(p2TestInput)
 
   // main results:
-  val runMain  = false
+  val runMain  = true
   val p1Result = if runMain then d5p1.solve(mainInput) else 0
   val p2Result = if runMain then d5p2.solve(mainInput) else 0
 
