@@ -2,7 +2,7 @@ import d3p1.*
 import d3p1.SchematicsEntry.PartNumber
 import d3p1.SchematicsEntry.PartSymbol
 import Extensions.*
-object d3p2 extends Solution:
+object d3p2 extends Solution[Int]:
 
   case class Gear(ratioComponents: List[Int]):
     val ratio = ratioComponents.reduce(_ * _)

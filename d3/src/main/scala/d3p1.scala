@@ -3,7 +3,7 @@ import scala.annotation.tailrec
 import scala.runtime.stdLibPatches.language.deprecated.symbolLiterals
 import Extensions.*
 
-object d3p1 extends Solution:
+object d3p1 extends Solution[Int]:
 
   enum SchematicsEntryType:
     case DOT

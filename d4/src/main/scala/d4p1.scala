@@ -1,4 +1,4 @@
-object d4p1 extends Solution:
+object d4p1 extends Solution[Int]:
 
   case class Card(id: Int, winning: Set[Int], actual: Set[Int]):
     override def toString(): String =

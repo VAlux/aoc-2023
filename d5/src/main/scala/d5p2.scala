@@ -1,7 +1,7 @@
 import scala.annotation.tailrec
 import d5p1.Mapping
 import java.math.BigInteger
-object d5p2 extends Solution:
+object d5p2 extends Solution[BigInt]:
 
   val positiveInfinity = BigInt(-1)
 
@@ -31,7 +31,7 @@ object d5p2 extends Solution:
       val minLocation = location.min2(newLocation)
       lookup(remRanges.head, remRanges.tail, mappings, minLocation)
 
-  override def solve(input: List[String]): Int =
+  override def solve(input: List[String]): BigInt =
     val almanach = d5p1.parseAlmanach(input)
     val ranges   = almanach.seedRanges
     d5p2.lookup(ranges.head, ranges.tail, almanach.mappings, positiveInfinity).intValue

@@ -1,4 +1,4 @@
-@main def entrypoint() =
+@main def entrypoint(args: String*) =
   // inputs:
   val p1TestInput = FileLoader.readFileLines("input-test-p1.txt")
   val p2TestInput = FileLoader.readFileLines("input-test-p2.txt")

@@ -1,5 +1,5 @@
 import scala.annotation.tailrec
-object d5p1 extends Solution:
+object d5p1 extends Solution[BigInt]:
 
   case class Range(destination: BigInt, source: BigInt, size: BigInt):
     override def toString(): String = s"$source - $destination : $size"
@@ -58,7 +58,7 @@ object d5p1 extends Solution:
   def lookup(source: BigInt, mappings: List[Mapping]): BigInt =
     mappings.foldLeft(source)(lookup)
 
-  override def solve(input: List[String]): Int =
+  override def solve(input: List[String]): BigInt =
     val almanach  = parseAlmanach(input)
     val locations = almanach.seeds.map(seed => lookup(seed, almanach.mappings))
-    locations.min.intValue
+    locations.min
