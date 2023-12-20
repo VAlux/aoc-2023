@@ -3,10 +3,13 @@ import d5p1.Mapping
 import java.math.BigInteger
 object d5p2 extends Solution[BigInt]:
 
+  // emulation
   val positiveInfinity = BigInt(-1)
 
   extension (current: BigInt)
-    def min2(other: BigInt): BigInt =
+    // version of BigInt min, including positive infinity emulation,
+    // this is a bad decision in general and applies only to the provided input data
+    def minWithPosInf(other: BigInt): BigInt =
       if other == positiveInfinity then current
       else if current == positiveInfinity then other
       else current.min(other)
@@ -16,7 +19,7 @@ object d5p2 extends Solution[BigInt]:
     if seed >= total then location
     else
       val current = d5p1.lookup(seed, mappings)
-      lookup(seed + 1, total, mappings, location.min2(current))
+      lookup(seed + 1, total, mappings, location.minWithPosInf(current))
 
   @tailrec
   def lookup(
@@ -26,9 +29,9 @@ object d5p2 extends Solution[BigInt]:
     location: BigInt
   ): BigInt =
     val newLocation = lookup(range.head, range.head + range.last, mappings)
-    if remRanges.isEmpty then location.min2(newLocation)
+    if remRanges.isEmpty then location.minWithPosInf(newLocation)
     else
-      val minLocation = location.min2(newLocation)
+      val minLocation = location.minWithPosInf(newLocation)
       lookup(remRanges.head, remRanges.tail, mappings, minLocation)
 
   override def solve(input: List[String]): BigInt =
