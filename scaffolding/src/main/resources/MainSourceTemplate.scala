@@ -7,22 +7,22 @@
   println("Day __day__:")
   println("-" * 20)
 
-  args.head match
-    case "test" =>
+  args.headOption match
+    case Some("test") =>
       args.last match
         case "1" => testP1(p1TestInput)
         case "2" => testP2(p2TestInput)
         case _   =>
           testP1(p1TestInput)
           testP2(p2TestInput)
-    case "main" =>
+    case Some("main") =>
       args.last match
         case "1" => runP1(mainInput)
         case "2" => runP2(mainInput)
         case _   =>
           runP1(mainInput)
           runP2(mainInput)
-    case _      =>
+    case _            =>
       testP1(p1TestInput)
       testP2(p2TestInput)
       runP1(mainInput)
