@@ -12,8 +12,10 @@ The organizer brings you over to the area where the boat races are held. The boa
 
 For example:
 
-`Time:      7  15   30
-Distance:  9  40  200`
+```
+Time:      7  15   30
+Distance:  9  40  200
+```
 This document describes three races:
 
 The first race lasts 7 milliseconds. The record distance in this race is 9 millimeters.
@@ -48,8 +50,10 @@ As the race is about to start, you realize the piece of paper with race times an
 
 So, the example from before:
 
-`Time:      7  15   30
-Distance:  9  40  200`
+```
+Time:      7  15   30
+Distance:  9  40  200
+```
 ...now instead means this:
 
 Time:      71530
