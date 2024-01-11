@@ -4,7 +4,7 @@
   val p2TestInput = FileLoader.readFileLines("input-test-p2.txt")
   val mainInput   = FileLoader.readFileLines("input.txt")
 
-  println("Day __day__:")
+  println("Day 7:")
   println("-" * 20)
 
   args.headOption match
@@ -31,17 +31,17 @@
   println("-" * 20)
 
 def testP1(input: List[String]) =
-  val p1TestResult = d__day__p1.solve(input)
+  val p1TestResult = d7p1.solve(input)
   println(s"[TEST] P1: $p1TestResult")
 
 def testP2(input: List[String]) =
-  val p2TestResult = d__day__p2.solve(input)
+  val p2TestResult = d7p2.solve(input)
   println(s"[TEST] P2: $p2TestResult")
 
 def runP1(input: List[String]) =
-  val p1Result = d__day__p1.solve(input)
+  val p1Result = d7p1.solve(input)
   println(s"[ACTUAL] P1: $p1Result")
 
 def runP2(input: List[String]) =
-  val p2Result = d__day__p2.solve(input)
+  val p2Result = d7p2.solve(input)
   println(s"[ACTUAL] P2: $p2Result")

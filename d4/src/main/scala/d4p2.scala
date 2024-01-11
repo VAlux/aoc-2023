@@ -1,5 +1,5 @@
 import d4p1.*
-object d4p2 extends Solution:
+object d4p2 extends Solution[Int]:
   def getScoringNumbersAmount(card: Card): Int =
     extractScoringNumbers(card).size
 

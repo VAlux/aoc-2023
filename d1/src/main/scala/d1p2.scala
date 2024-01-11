@@ -2,7 +2,7 @@ import scala.annotation.tailrec
 import Extensions.*
 import d1p1.*
 
-object d1p2 extends Solution:
+object d1p2 extends Solution[Int]:
   val numbersMapping: List[(String, String)] =
     List(
       "one"   -> "1",

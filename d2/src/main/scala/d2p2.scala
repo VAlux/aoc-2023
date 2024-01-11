@@ -1,5 +1,5 @@
 import d2p1.*
-object d2p2 extends Solution:
+object d2p2 extends Solution[Int]:
 
   def groupRoundsByCubeType(rounds: List[Round]): Map[CubeType, List[RoundEntry]] =
     rounds.flatMap(_.entries).groupBy(entry => entry.cubeType)

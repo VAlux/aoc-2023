@@ -1,2 +1,2 @@
-trait Solution:
-  def solve(input: List[String]): Int
+trait Solution[A]:
+  def solve(input: List[String]): A

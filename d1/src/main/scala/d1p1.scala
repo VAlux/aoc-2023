@@ -1,4 +1,4 @@
-object d1p1 extends Solution:
+object d1p1 extends Solution[Int]:
   override def solve(input: List[String]): Int =
     input.map(extractDigitsList).map(extractNumber).sum
 

@@ -1,4 +1,4 @@
-object d2p1 extends Solution:
+object d2p1 extends Solution[Int]:
   enum CubeType(val name: String):
     case RED   extends CubeType("red")
     case GREEN extends CubeType("green")
