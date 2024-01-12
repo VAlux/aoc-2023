@@ -19,7 +19,7 @@ object d7p1 extends Solution[Int]:
   case class Card(name: Char, rank: Int)
   case class Hand(cards: List[Card], bid: Int)
 
-  enum HandType(rank: Int):
+  enum HandType(val rank: Int):
     case FiveOfAKind  extends HandType(7)
     case FourOfAKind  extends HandType(6)
     case FullHouse    extends HandType(5)
@@ -31,6 +31,27 @@ object d7p1 extends Solution[Int]:
   object HandType:
     def infer(hand: Hand): HandType =
       val occurences: Map[Card, Int] = hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
+      if occurences.values.exists(_ == 5) then HandType.FiveOfAKind
+      else if occurences.values.exists(_ == 4) then HandType.FourOfAKind
+      else if occurences.values.exists(_ == 3) && occurences.values.exists(_ == 2) then HandType.FullHouse
+      else if occurences.values.exists(_ == 3) then HandType.ThreeOfAKind
+      else if occurences.values.count(_ == 2) == 2 then HandType.TwoPair
+      else if occurences.values.count(_ == 2) == 1 then HandType.OnePair
+      else HighCard
+
+  case class Round(hand: Hand, handType: HandType)
+
+  given handOrdering: Ordering[Round] with
+    override def compare(x: Round, y: Round): Int =
+      val rankComparison = Ordering.Int.compare(x.handType.rank, y.handType.rank)
+      if rankComparison != 0 then rankComparison
+      else
+        x.hand.cards
+          .zip(y.hand.cards)
+          .map((left, right) => (left.rank, right.rank))
+          .find((left, right) => left - right != 0)
+          .map(Ordering.Int.compare)
+          .getOrElse(0)
 
   def parseHands(input: List[String]): List[Hand] =
     def parseCard(card: Char): Card = Card(card, cardRanking(card))
@@ -44,6 +65,12 @@ object d7p1 extends Solution[Int]:
     }
 
   override def solve(input: List[String]): Int =
-    val hands = parseHands(input)
-    println(hands)
-    0
+    val hands     = parseHands(input)
+    val handTypes = hands.map(HandType.infer)
+    hands
+      .zip(handTypes)
+      .map(Round.apply)
+      .sorted
+      .zipWithIndex
+      .map((round, index) => round.hand.bid * (index + 1))
+      .sum
