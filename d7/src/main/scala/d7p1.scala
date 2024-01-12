@@ -18,6 +18,7 @@ object d7p1 extends Solution[Int]:
 
   case class Card(name: Char, rank: Int)
   case class Hand(cards: List[Card], bid: Int)
+  case class Round(hand: Hand, handType: HandType)
 
   enum HandType(val rank: Int):
     case FiveOfAKind  extends HandType(7)
@@ -30,16 +31,19 @@ object d7p1 extends Solution[Int]:
 
   object HandType:
     def infer(hand: Hand): HandType =
-      val occurences: Map[Card, Int] = hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
-      if occurences.values.exists(_ == 5) then HandType.FiveOfAKind
-      else if occurences.values.exists(_ == 4) then HandType.FourOfAKind
-      else if occurences.values.exists(_ == 3) && occurences.values.exists(_ == 2) then HandType.FullHouse
-      else if occurences.values.exists(_ == 3) then HandType.ThreeOfAKind
-      else if occurences.values.count(_ == 2) == 2 then HandType.TwoPair
-      else if occurences.values.count(_ == 2) == 1 then HandType.OnePair
-      else HighCard
+      extension (a: Map[Card, Int])
+        def containsAmount(n: Int): Boolean = a.values.exists(_ == n)
+        def amountOf(n: Int): Int           = a.values.count(_ == n)
 
-  case class Round(hand: Hand, handType: HandType)
+      val occurences: Map[Card, Int] = hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
+
+      if occurences.containsAmount(5) then HandType.FiveOfAKind
+      else if occurences.containsAmount(4) then HandType.FourOfAKind
+      else if occurences.containsAmount(3) && occurences.containsAmount(2) then HandType.FullHouse
+      else if occurences.containsAmount(3) then HandType.ThreeOfAKind
+      else if occurences.amountOf(2) == 2 then HandType.TwoPair
+      else if occurences.amountOf(2) == 1 then HandType.OnePair
+      else HighCard
 
   given handOrdering: Ordering[Round] with
     override def compare(x: Round, y: Round): Int =

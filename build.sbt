@@ -12,7 +12,8 @@ lazy val root = project
   .in(file("."))
   .aggregate(shared, d1)
   .settings(
-    name := "Advent of Code 2023"
+    name := "Advent of Code 2023",
+    commands += HelpCommand.manual
   )
 
 lazy val scaffolding = project
