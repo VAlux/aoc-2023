@@ -45,7 +45,7 @@ object d7p1 extends Solution[Int]:
       else if occurences.amountOf(2) == 1 then HandType.OnePair
       else HighCard
 
-  given handOrdering: Ordering[Round] with
+  given roundOrdering: Ordering[Round] with
     override def compare(x: Round, y: Round): Int =
       val rankComparison = Ordering.Int.compare(x.handType.rank, y.handType.rank)
       if rankComparison != 0 then rankComparison
