@@ -1,6 +1,7 @@
 import Extensions.segment
 import d8p1.Network.NodeLink
 import scala.collection.MapFactoryDefaults
+import scala.annotation.tailrec
 object d8p1 extends Solution[Int]:
 
   enum StepType:
@@ -71,6 +72,7 @@ object d8p1 extends Solution[Int]:
         case _                       => None
 
     def walk(map: MapDefinition, start: Node, end: Node): List[Node] =
+      @tailrec
       def go(current: StepType, node: Node, index: Int = 0, acc: List[Node] = List.empty): List[Node] =
         if acc.lastOption.exists(_ == end) then acc
         else
