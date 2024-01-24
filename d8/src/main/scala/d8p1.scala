@@ -1,7 +1,6 @@
 import Extensions.segment
-import d8p1.Network.NodeLink
-import scala.collection.MapFactoryDefaults
 import scala.annotation.tailrec
+import d8p1.Network.NetworkGraph
 object d8p1 extends Solution[Int]:
 
   enum StepType:
@@ -30,12 +29,14 @@ object d8p1 extends Solution[Int]:
       Command(input.toCharArray().flatMap(StepType.infer).toList)
 
   object Network:
+    type NetworkGraph = Map[Node, NodeLink]
+
     case class Node(value: String):
       override def toString(): String = value
 
     case class NodeLink(left: Node, right: Node)
 
-    def parse(input: List[String]): Map[Node, NodeLink] =
+    def parse(input: List[String]): NetworkGraph =
       def parseLink(link: String): Option[NodeLink] =
         link.filter(ch => ch != '(' && ch != ')').split(", ") match
           case Array(left, right) => Some(NodeLink(Node(left), Node(right)))
@@ -52,7 +53,7 @@ object d8p1 extends Solution[Int]:
 
       input.flatMap(parseMapping).toMap
 
-  case class MapDefinition(command: Command, network: Map[Network.Node, Network.NodeLink]):
+  case class MapDefinition(command: Command, network: NetworkGraph):
     import Network.Node
 
     override def toString(): String =
@@ -64,7 +65,7 @@ object d8p1 extends Solution[Int]:
         case StepType.Right => network(node).right
 
   object MapDefinition:
-    import Network.Node
+    import Network.*
 
     def parse(input: List[String]): Option[MapDefinition] =
       input match
