@@ -74,17 +74,19 @@ object d7p1 extends Solution[Int]:
 
     def infer(hand: Hand): HandType =
       val occurences = countOccurences(hand)
+
+      def checkOccurencesForJokersAmount(jokersAmount: Int): HandType =
+        if occurences == Map(joker -> 5) then FiveOfAKind
+        else
+          val occurencesWithoutJokers = occurences.filter((card, _) => card != joker)
+          occurencesWithoutJokers
+            .filter((card, _) => card != joker)
+            .map((card, amount) => checkOccurences(occurencesWithoutJokers.updated(card, amount + jokersAmount)))
+            .max
+
       occurences
         .get(joker)
-        .map(jokersAmount =>
-          if occurences == Map(joker -> 5) then FiveOfAKind
-          else
-            val occurencesWithoutJokers = occurences.filter((card, _) => card != joker)
-            occurencesWithoutJokers
-              .filter((card, _) => card != joker)
-              .map((card, amount) => checkOccurences(occurencesWithoutJokers.updated(card, amount + jokersAmount)))
-              .max
-        )
+        .map(checkOccurencesForJokersAmount)
         .getOrElse(checkOccurences(occurences))
 
   def parseCard(card: Char): Card = Card(card, cardRanking(card))
