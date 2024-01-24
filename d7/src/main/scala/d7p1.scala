@@ -19,30 +19,18 @@ object d7p1 extends Solution[Int]:
   )
 
   case class Card(name: Char, rank: Int)
-  case class Hand(cards: List[Card], bid: Int)
-  case class Round(hand: Hand, handType: HandType)
+  case class Hand(cards: List[Card], bid: Int):
+    override def toString(): String =
+      s"[${cards.map(_.name).mkString("][")}] - Bid: $bid"
+
+  case class Round(hand: Hand, handType: HandType):
+    override def toString(): String =
+      s"Hand: $hand Type: $handType"
+
+  def countOccurences(hand: Hand): Map[Card, Int] =
+    hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
 
   object Round:
-    def eraseJokers(round: Round): Round =
-      val joker                      = parseCard('J')
-      val occurences: Map[Card, Int] = round.hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
-      if !occurences.contains(joker) then round
-      else
-        val jokersAmount = occurences(joker)
-
-        val candidates = occurences
-          .filterNot((card, _) => card == joker)
-          .map((card, amount) => (card, amount + jokersAmount))
-
-        round.handType match
-          case HandType.FiveOfAKind  => ???
-          case HandType.FourOfAKind  => ???
-          case HandType.FullHouse    => ???
-          case HandType.ThreeOfAKind => ???
-          case HandType.TwoPair      => ???
-          case HandType.OnePair      => ???
-          case HandType.HighCard     => ???
-
     given Ordering[Round] with
       override def compare(x: Round, y: Round): Int =
         val rankComparison = Ordering.Int.compare(x.handType.rank, y.handType.rank)
@@ -65,6 +53,12 @@ object d7p1 extends Solution[Int]:
     case HighCard     extends HandType(1)
 
   object HandType:
+    val joker = parseCard('J')
+
+    given Ordering[HandType] with
+      override def compare(x: HandType, y: HandType): Int =
+        Ordering.Int.compare(x.rank, y.rank)
+
     extension (a: Map[Card, Int])
       def containsAmount(n: Int): Boolean = a.values.exists(_ == n)
       def amountOf(n: Int): Int           = a.values.count(_ == n)
@@ -79,18 +73,17 @@ object d7p1 extends Solution[Int]:
       else HighCard
 
     def infer(hand: Hand): HandType =
-      val occurences: Map[Card, Int] = hand.cards.groupMapReduce(identity)(_ => 1)(_ + _)
-
-      val joker = parseCard('J')
+      val occurences = countOccurences(hand)
       occurences
         .get(joker)
         .map(jokersAmount =>
           if occurences == Map(joker -> 5) then FiveOfAKind
           else
-            occurences
-              .filterNot((card, _) => card == joker)
-              .map((card, amount) => (card, amount + jokersAmount))
-              .pipe(checkOccurences)
+            val occurencesWithoutJokers = occurences.filter((card, _) => card != joker)
+            occurencesWithoutJokers
+              .filter((card, _) => card != joker)
+              .map((card, amount) => checkOccurences(occurencesWithoutJokers.updated(card, amount + jokersAmount)))
+              .max
         )
         .getOrElse(checkOccurences(occurences))
 
