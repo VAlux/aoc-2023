@@ -1,4 +1,6 @@
 import scala.annotation.tailrec
+import Extensions.segment
+
 object d5p1 extends Solution[BigInt]:
 
   case class Range(destination: BigInt, source: BigInt, size: BigInt):
@@ -13,19 +15,6 @@ object d5p1 extends Solution[BigInt]:
 
     override def toString(): String =
       s"${seeds.mkString(" ")}\n${mappings.mkString("\n")}"
-
-  def segmentInput(input: List[String]): List[List[String]] =
-    @tailrec
-    def go(current: String, rem: List[String], acc: List[List[String]] = List.empty): List[List[String]] =
-      if rem.isEmpty then acc
-      else
-        current match
-          case ""   => go(rem.head, rem.tail, acc :+ List())
-          case line => go(rem.head, rem.tail, acc.updated(acc.size - 1, acc.last :+ current))
-
-    input match
-      case first :: rest => go(rest.head, rest.tail, List(List(first)))
-      case _             => List.empty
 
   def parseAlmanach(input: List[String]): Almanach =
     def parseSeeds(definition: String): List[BigInt] =
@@ -43,7 +32,7 @@ object d5p1 extends Solution[BigInt]:
           Some(Mapping(from, to.replace(" map:", ""), mapping))
         case _                     => None
 
-    val segments = segmentInput(input)
+    val segments = input.segment(line => line == "")
     Almanach(parseSeeds(segments.head.head), segments.tail.flatMap(parseMappings))
 
   def isInRange(source: BigInt, range: Range): Boolean =

@@ -76,6 +76,13 @@ lazy val d7 = project
     name := "Day 7"
   )
 
+lazy val d8 = project
+  .in(file("d8"))
+  .dependsOn(shared)
+  .settings(
+    name := "Day 8"
+  )
+
 addCommandAlias("cd", "project")
 addCommandAlias("ls", "projects")
 addCommandAlias("c", "compile")
