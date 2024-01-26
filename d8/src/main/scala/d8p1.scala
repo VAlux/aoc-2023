@@ -74,14 +74,14 @@ object d8p1 extends Solution[Int]:
 
     def walk(map: MapDefinition, start: Node, end: Node): List[Node] =
       @tailrec
-      def go(current: StepType, node: Node, index: Int = 0, acc: List[Node] = List.empty): List[Node] =
+      def step(current: StepType, node: Node, index: Int = 0, acc: List[Node] = List.empty): List[Node] =
         if acc.lastOption.exists(_ == end) then acc
         else
           val newNode   = map.step(current, node)
           val nextIndex = index + 1
-          go(map.command.getStep(nextIndex), newNode, nextIndex, acc :+ newNode)
+          step(map.command.getStep(nextIndex), newNode, nextIndex, acc :+ newNode)
 
-      go(map.command.getStep(0), start)
+      step(map.command.getStep(0), start)
 
   override def solve(input: List[String]): Int =
     MapDefinition
