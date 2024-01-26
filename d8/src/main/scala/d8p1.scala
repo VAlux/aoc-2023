@@ -54,30 +54,28 @@ object d8p1 extends Solution[Int]:
       input.flatMap(parseMapping).toMap
 
   case class MapDefinition(command: Command, network: NetworkGraph):
-    import Network.Node
-
     override def toString(): String =
       s"$command\n${network.map((node, link) => s"$node = (${link.left}, ${link.right})").mkString("\n")}"
 
-    def step(step: StepType, node: Node): Node =
-      step match
-        case StepType.Left  => network(node).left
-        case StepType.Right => network(node).right
-
   object MapDefinition:
-    import Network.*
+    import Network.Node
 
     def parse(input: List[String]): Option[MapDefinition] =
       input match
         case command :: networkNodes => Some(MapDefinition(Command.parse(command), Network.parse(networkNodes)))
         case _                       => None
 
+    def navigate(network: NetworkGraph, step: StepType, node: Node): Node =
+      step match
+        case StepType.Left  => network(node).left
+        case StepType.Right => network(node).right
+
     def walk(map: MapDefinition, start: Node, end: Node): List[Node] =
       @tailrec
       def step(current: StepType, node: Node, index: Int = 0, acc: List[Node] = List.empty): List[Node] =
         if acc.lastOption.exists(_ == end) then acc
         else
-          val newNode   = map.step(current, node)
+          val newNode   = navigate(map.network, current, node)
           val nextIndex = index + 1
           step(map.command.getStep(nextIndex), newNode, nextIndex, acc :+ newNode)
 
